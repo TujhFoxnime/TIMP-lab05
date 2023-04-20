@@ -15,6 +15,7 @@ acc.ChangeBalance(-1235);
 ASSERT_EQ(acc.GetBalance(), -1);
 acc.Unlock();
 ASSERT_THROW(acc.ChangeBalance(1234), std::runtime_error);
+}
 
 TEST(Banking, Transaction) {
 Account acc1(1, 1500);
