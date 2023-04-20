@@ -8,7 +8,6 @@ Account acc(0, 0);
 ASSERT_EQ(acc.GetBalance(), 0);
 ASSERT_THROW(acc.ChangeBalance(1234), std::runtime_error);
 acc.Lock();
-
 ASSERT_NO_THROW(acc.ChangeBalance(1234));
 ASSERT_THROW(acc.Lock(), std::runtime_error);
 ASSERT_EQ(acc.GetBalance(), 1234);
