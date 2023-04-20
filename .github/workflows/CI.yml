@@ -1,0 +1,45 @@
+name: Running
+on:
+ push:
+  branches: [main]
+ pull_request:
+  branches: [main]
+
+jobs:
+ build_Linux:
+  runs-on: ubuntu-latest
+  steps:
+  - uses: actions/checkout@v3
+
+  - name: Add GTest
+    run: git clone https://github.com/google/googletest.git third-party/gtest -b release-1.11.0
+
+  - name: Install lcov
+    run: sudo apt-get install -y lcov
+
+  - name: CMake banking and tests
+    run: cmake ${{github.workspace}} -B ${{github.workspace}}/build
+
+  - name: Build B&T
+    run: cmake --build ${{github.workspace}}/build
+
+  - name: Run test
+    run: ${{github.workspace}}/build/run_test
+
+  - name: Make Coverage Process
+    run: |
+      cd ${{github.workspace}}/build
+      lcov -t "Testfile Coverage" -o Testfile.info -c -d .
+  - name: Publish to coveralls.io
+    uses: coverallsapp/github-action@master
+    with:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      parallel: true
+      path-to-lcov: ${{github.workspace}}/build/Testfile.info
+      coveralls-endpoint: https://coveralls.io
+
+  - name: End coveralls
+    uses: coverallsapp/github-action@master
+    with:
+      github-token: ${{ secrets.github_token }}
+      parallel-finished: true
